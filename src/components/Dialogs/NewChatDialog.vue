@@ -63,7 +63,7 @@
             text
             @click="sendData"
           >
-            Save
+            Connect
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -89,7 +89,8 @@
             this.$emit('channel-change', {
                 chatroom: this.chatRoom,
                 password: this.password
-            })
+            });
+            this.changeDialogStatus();
         }
     }
   }

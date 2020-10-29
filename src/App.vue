@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <NewChatDialog 
-      :dialog="newChatDialog" 
-      @change-dialog-status="newChatDialog = !newChatDialog" 
-      @channel-change="channelChange" 
+    <NewChatDialog
+      :dialog="newChatDialog"
+      @change-dialog-status="newChatDialog = !newChatDialog"
+      @channel-change="channelChange"
     />
-    
+
     <v-navigation-drawer app>
       <div class="user-chats home" @click="redirectHome">
         <v-avatar color="primary" size="40">K</v-avatar>
@@ -16,7 +16,16 @@
       <v-avatar color="primary" size="40">K</v-avatar>
       <router-link to="/">Home</router-link>
     </div> -->
-      <v-btn block depressed elevation="0" text tile class="new-chat-btn" @click="newChatDialog = true">New Chat</v-btn>
+      <v-btn
+        block
+        depressed
+        elevation="0"
+        text
+        tile
+        class="new-chat-btn"
+        @click="newChatDialog = true"
+        >New Chat</v-btn
+      >
     </v-navigation-drawer>
 
     <v-app-bar app>
@@ -62,7 +71,9 @@ export default {
     },
 
     channelChange(data) {
-      console.log(data);
+      fetch(`http://localhost:3000/server?chatroom=${encodeURIComponent(data.chatroom)}&password=${encodeURIComponent(data.password)}`)
+      .then((res) => res.json())
+      .then((channel) => console.log(channel));
     }
   },
 };
