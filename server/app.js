@@ -14,24 +14,36 @@ function connectToDb(cb) {
     });
 }
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(bodyParser.json());
 app.use(cors());
+
 app.get('/', (req, res) => {
     res.send('Hello World!')
 });
 
-app.get('/server', (req, res) => {
-    connectToDb(async (collection) =>{
-        const room = await collection.findOne({chatroom: req.query.chatroom});
-        if(room) {
-            if(room.password == req.query.password) {
+app.post('/server', (req, res) => {
+    console.log(req.body);
+    connectToDb(async (collection) => {
+        const room = await collection.findOne({chatroom: req.body.chatroom});
+        
+        if (room) {
+            if (room.password == req.body.password) {
                 res.json(room);
             }
         } else {
-            collection.insertOne(req.query);
+            collection.insertOne(req.body);
+            res.json(req.body);
         }
     })
+});
+
+app.post('/send-message', (req, res) => {
+    connectToDb(async (collection) => {
+        //
+    });
 });
 
 app.listen(port, () => {

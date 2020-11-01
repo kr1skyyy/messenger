@@ -12,10 +12,12 @@
         <a>Site Logo</a>
       </div>
       <v-divider class="separator" />
-      <!-- for each chat <div class="user-chats">
-      <v-avatar color="primary" size="40">K</v-avatar>
-      <router-link to="/">Home</router-link>
-    </div> -->
+
+      <div v-for="channel in channels" :key="channel.chatroom" class="user-chats">
+        <v-avatar color="primary" size="40">{{ channel.chatroom.charAt(0).toUpperCase() }}</v-avatar>
+        <router-link :to="'/' + channel.chatroom">{{ channel.chatroom }}</router-link>
+      </div>
+
       <v-btn
         block
         depressed
@@ -29,16 +31,14 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <h1 class="title mb-2">KIK Messenger</h1>
+      <h1 class="title mb-2">{{ selectedChannel.chatroom || 'KIK Messenger' }}</h1>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
+        <Channel :messages="messages" />
     <v-main>
       <!-- Provides the application the proper gutter -->
-      <v-container fluid>
-        <!-- If using vue-router -->
-        <router-view></router-view>
-      </v-container>
+         <ChatboxInput :messages="messages" :showChatbox="true" :selectedChannel="selectedChannel" />
     </v-main>
 
     <v-footer app>
@@ -49,16 +49,23 @@
 
 <script>
 import NewChatDialog from './components/Dialogs/NewChatDialog';
+import Channel from './components/Channel';
+import ChatboxInput from './components/ChatInput';
 
 export default {
   name: "App",
 
   components: {
-    NewChatDialog
+    NewChatDialog,
+    Channel,
+    ChatboxInput
   },
 
   data: () => ({
-    newChatDialog: false
+    newChatDialog: false,
+    selectedChannel: {},
+    channels: [],
+    messages: [],
   }),
 
   methods: {
@@ -71,9 +78,25 @@ export default {
     },
 
     channelChange(data) {
-      fetch(`http://localhost:3000/server?chatroom=${encodeURIComponent(data.chatroom)}&password=${encodeURIComponent(data.password)}`)
+      fetch('http://localhost:3000/server', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+      })
       .then((res) => res.json())
-      .then((channel) => console.log(channel));
+      .then((channel) => {
+        console.log(channel);
+       // if (!this.channels.indexOf(channel)) {
+          this.channels.push(channel);
+        // }
+
+        this.selectedChannel = channel;
+        this.messages = channel.messages;
+
+        console.log(this)
+      });
     }
   },
 };
