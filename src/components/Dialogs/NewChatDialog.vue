@@ -5,19 +5,9 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-          Open Dialog
-        </v-btn>
-      </template>
       <v-card>
         <v-card-title>
-          <span class="headline">User Profile</span>
+          <span class="headline">Channel Select</span>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -73,7 +63,7 @@
 
 <script>
   export default {
-    props: ['dialog'],
+    props: ['dialog', 'socket'],
     data() {
         return {
             chatRoom: '',
@@ -86,11 +76,11 @@
         },
 
         sendData() {
-            this.$emit('channel-change', {
-                chatroom: this.chatRoom,
-                password: this.password
-            });
-            this.changeDialogStatus();
+          this.socket.emit('user-changed-server', {
+              chatroom: this.chatRoom,
+              password: this.password
+          });
+          this.changeDialogStatus();
         }
     }
   }
